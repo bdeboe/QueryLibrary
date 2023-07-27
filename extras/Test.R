@@ -1,9 +1,12 @@
-
-library(SqlRender)
-library(DatabaseConnector)
+library(devtools)
+load_all("C:/Users/bdeboe/Github/bdeboe/SqlRender", TRUE, TRUE, TRUE, TRUE, TRUE)
+.jaddClassPath("C:/Users/bdeboe/Github/bdeboe/SqlRender/target/SqlRender-1.15.1-IRIS.jar")
+load_all("C:/Users/bdeboe/Github/bdeboe/DatabaseConnector", TRUE, TRUE, TRUE, TRUE, TRUE)
+# library(SqlRender)
+# library(DatabaseConnector)
 library(DT)
 
-setwd("D:/Documents/Github/QueryLibrary/inst/shinyApps/QueryLibrary")
+setwd("C:/Users/bdeboe/Github/bdeboe/QueryLibrary/inst/shinyApps/QueryLibrary")
 
 source("widgets.R")
 source("helpers.R")
@@ -78,9 +81,13 @@ if (length(databases) > 0) {
                                                  server = databaseParameters$server,
                                                  port = databaseParameters$port,
                                                  extraSettings = databaseParameters$extraSettings,
+                                                 connectionString = databaseParameters$connectionString,
                                                  pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR"))
 
     schemaDefinition <- list(cdm = databaseParameters$cdm, vocab = databaseParameters$vocab)
+    
+    connection <- DatabaseConnector::connect(connectionDetails)
+    writeLines(paste0("Connected successfully to ", databaseName))
 
     for (mdFile in mdFiles) {
       writeLines("  ", sep = "")
