@@ -2,11 +2,23 @@ library(devtools)
 load_all("C:/Users/bdeboe/Github/bdeboe/SqlRender", TRUE, TRUE, TRUE, TRUE, TRUE)
 .jaddClassPath("C:/Users/bdeboe/Github/bdeboe/SqlRender/target/SqlRender-1.15.1-IRIS.jar")
 load_all("C:/Users/bdeboe/Github/bdeboe/DatabaseConnector", TRUE, TRUE, TRUE, TRUE, TRUE)
+
+Sys.setenv(DATABASECONNECTOR_JAR = "C:/InterSystems/IRIS/dev/java/lib/1.8/")
+
 # library(SqlRender)
 # library(DatabaseConnector)
 library(DT)
 
 setwd("C:/Users/bdeboe/Github/bdeboe/QueryLibrary/inst/shinyApps/QueryLibrary")
+
+library(readr)
+connInfo <- list( dialect = "iris", 
+                  connectionString = "jdbc:IRIS://localhost:1972/OMOP", 
+                  user="_SYSTEM", 
+                  password="SYS",
+                  cdm = "OMOP",
+                  vocab = "OMOP")
+write_rds(connInfo, "./testdatabases/iris.Rds")
 
 source("widgets.R")
 source("helpers.R")
@@ -85,9 +97,6 @@ if (length(databases) > 0) {
                                                  pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR"))
 
     schemaDefinition <- list(cdm = databaseParameters$cdm, vocab = databaseParameters$vocab)
-    
-    connection <- DatabaseConnector::connect(connectionDetails)
-    writeLines(paste0("Connected successfully to ", databaseName))
 
     for (mdFile in mdFiles) {
       writeLines("  ", sep = "")
