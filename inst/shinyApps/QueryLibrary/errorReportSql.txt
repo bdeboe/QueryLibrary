@@ -1,0 +1,51 @@
+DBMS:
+iris
+
+Error:
+java.sql.SQLException: [SQLCODE: <-4>:<A term expected, beginning with one of the following: identifier, constant, aggregate, %ALPHAUP, %EXACT, %MVR, %SQLSTRING, %SQLUPPER, %STRING, %TRUNCATE, %UPPER, $$, :, +, -, (, NOT, EXISTS, or FOR>]
+[Location: <Prepare>]
+[%msg: < A term expected, beginning with either of:  (, NOT, EXISTS, or FOR^SELECT DISTINCT C . concept_id AS Entity_Concept_Id , C . concept_name AS Entity_Name , C . concept_code AS Entity_Code , :%qpar(1) AS Entity_Type , C . concept_class_id AS Entity_concept_class_id , C . vocabulary_id AS Entity_vocabulary_id FROM OMOP . concept C LEFT JOIN OMOP . concept_synonym S ON C . concept_id = S . concept_id WHERE C . vocabulary_id IN ( :%qpar(2) , :%qpar(3) , :%qpar(4) , :%qpar(5) , :%qpar(6) , :%qpar(7) , :%qpar(8) , :%qpar(9) ) AND C . domain_id = :%qpar(10) AND C . standard_concept = :%qpar(11) AND LOWER ( C . concept_name ) LIKE LOWER ( :%qpar(12) ) OR LOWER ( S . concept_synonym_name ) LIKE LOWER ( :%qpar(13) ) AND WHERE>]
+
+SQL:
+SELECT DISTINCT
+  C.concept_id            AS Entity_Concept_Id,
+  C.concept_name          AS Entity_Name,
+  C.concept_code          AS Entity_Code,
+  'Concept'               AS Entity_Type,
+  C.concept_class_id      AS Entity_concept_class_id,
+  C.vocabulary_id         AS Entity_vocabulary_id
+FROM OMOP.concept C
+LEFT JOIN OMOP.concept_synonym S
+ON C.concept_id = S.concept_id
+WHERE C.vocabulary_id IN ('SNOMED','ICD9Proc','ICD10PCS','CPT4','CDT','HCPCS','SNOMED Veterinary','OPCS4')
+      AND C.domain_id = 'Procedure'
+      AND C.standard_concept = 'S'
+      -- regular expression containing the input pattern
+      AND LOWER(C.concept_name) LIKE LOWER('%Fixation of fracture%')
+            OR LOWER(S.concept_synonym_name) LIKE LOWER('%Fixation of fracture%')
+      -- Retrieve only valid concepts
+      AND WHERE getdate() >= C.valid_start_date AND getdate() <= C.valid_end_date;
+
+R version:
+R version 4.2.3 (2023-03-15 ucrt)
+
+Platform:
+x86_64-w64-mingw32
+
+Attached base packages:
+- stats
+- graphics
+- grDevices
+- utils
+- datasets
+- methods
+- base
+
+Other attached packages:
+- DatabaseConnector (6.2.3)
+- SqlRender (1.15.1)
+- readr (2.1.4)
+- DT (0.28)
+- testthat (3.1.10)
+- devtools (2.4.5)
+- usethis (2.2.2)
